@@ -159,6 +159,10 @@ func main() {
 				log.Errorln(err)
 				continue
 			}
+			if info["version"] == "" || info["pid"] == "" {
+				time.Sleep(time.Duration(1) * time.Second)
+				continue
+			}
 			infoLabel := prometheus.Labels{
 				"katsubushi_version": info["version"],
 				"katsubushi_pid":     info["pid"],
