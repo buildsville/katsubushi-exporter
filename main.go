@@ -20,6 +20,7 @@ const (
 	defaultAddr            = ":9298"
 	defaultKatsubushiHost  = "localhost"
 	defaultKatsubushiPort  = "11212"
+	retryDuration          = 1
 )
 
 const rootDoc = `<html>
@@ -157,10 +158,12 @@ func main() {
 			info, stats, err := getKatsubushiStats()
 			if err != nil {
 				log.Errorln(err)
+				time.Sleep(time.Duration(retryDuration) * time.Second)
 				continue
 			}
 			if info["version"] == "" || info["pid"] == "" {
-				time.Sleep(time.Duration(1) * time.Second)
+				log.Info("Retry since info(version or pid) is empty")
+				time.Sleep(time.Duration(retryDuration) * time.Second)
 				continue
 			}
 			infoLabel := prometheus.Labels{
